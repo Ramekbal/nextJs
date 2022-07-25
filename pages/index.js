@@ -1,11 +1,64 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
+import {usegetHello, usegetBlogs} from './../actions/index';
 import NavbarComponent from "Component/NavbarComponent";
 import Card from "Component/Card";
 import { Row, Col, Container } from "react-bootstrap";
 import { getAllBlog } from "lib/api";
-export default function HomePage({ blogs }) {
-  console.log(blogs);
+import FilterMenu from "Component/FilterMenu";
+export default function HomePage({ blogs : initialData }) {
+  const [gridView, setView]=useState({
+    view:{list:1}
+  })
+  const promisess= new Promise((resolve,reject)=>{
+    reject("hiiii")
+
+  })
+  useEffect(()=>{
+  //  console.log(1);
+  //  setTimeout(()=>{console.log(2)},1000);
+  //  setTimeout(()=>{console.log(3)},0);
+
+  //  console.log(4);
+   printName()
+
+    // console.log("==", objE)
+  },[]);
+
+  function printName() {
+    setTimeout(()=>{
+      console.log("======",i);
+    },1000)
+    let i=1;
+  }
+
+  // const {data, error}= usegetHello();
+  // console.log("data", data);
+
+  const {data:datas, errors} = usegetBlogs(initialData);
+  console.log("datas", datas);
+
+  // const dataBLogs = usegetBlogs();
+  // console.log("data=====", dataBLogs);
+  // if(!datas){
+  //   return <div>Loading...</div>
+  // }
+ 
+  // useEffect(()=>{
+  //  async function getAllData(){
+  //     const blogs = await getAllBlog();
+  //     return blogs
+  //   }
+  //   getAllData();
+  // },[])
+  // console.log(blogs);
+  const clickHandler =() =>{
+      setView({
+        view:{
+          list:gridView.view.list==0?1:0
+        }
+      })
+  }
   return (
     <>
       <Head>
@@ -18,10 +71,14 @@ export default function HomePage({ blogs }) {
       </Head>
       <NavbarComponent />
       <Container>
+        <hr/>
+        <FilterMenu onCLickHabdler ={clickHandler}></FilterMenu>
         <Row xs={1} md={2} className="g-4">
           {/* <h1>fsdf</h1> */}
-          {blogs.map((blog) => {
+          {datas?.map((blog) => {
+           
             return (
+              gridView.view.list ==1 ?
               <Col lg="4" key={blog.slug}>
                 {" "}
                 <Card
@@ -29,7 +86,26 @@ export default function HomePage({ blogs }) {
                   title={blog.title}
                   subTitle={blog.subTitle}
                   date={blog.date}
-                  imageUrl={blog.CoverImage}
+                  imageUrl={ blog.CoverImage}
+                  link={{
+                    href:'blog/[slug]', 
+                    as:`blog/${blog.slug}`
+                  }}
+                />{" "}
+              </Col>
+              :
+              <Col key={blog.slug}>
+                {" "}
+                <Card
+                  author={blog.author}
+                  title={blog.title}
+                  subTitle={blog.subTitle}
+                  date={blog.date}
+                  imageUrl={ blog.CoverImage}
+                  link={{
+                    href:'blog/[slug]', 
+                    as:`blog/${blog.slug}`
+                  }}
                 />{" "}
               </Col>
             );
